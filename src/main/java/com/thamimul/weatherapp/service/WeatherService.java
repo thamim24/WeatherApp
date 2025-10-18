@@ -1,6 +1,7 @@
 package com.thamimul.weatherapp.service;
 
 import com.thamimul.weatherapp.dto.WeatherResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -12,6 +13,9 @@ public class WeatherService {
 
     @Value("${weather.api.key:demo_key}")
     private String apiKey;
+
+    @Autowired
+    private AIService aiService;
 
     private final String WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
@@ -53,35 +57,31 @@ public class WeatherService {
             weatherResponse.setLatitude(coord.path("lat").asDouble());
             weatherResponse.setLongitude(coord.path("lon").asDouble());
             
-            // AI Summary
-            String aiSummary = generateAISummary(weatherResponse, units);
+            // Get unit symbols
+            String unit = units.equals("metric") ? "°C" : "°F";
+            String windUnit = units.equals("metric") ? "m/s" : "mph";
+            
+            // Generate AI Summary using Groq API
+            String aiSummary = aiService.generateWeatherSummary(
+                weatherResponse.getCity(),
+                weatherResponse.getCountry(),
+                weatherResponse.getTemperature(),
+                weatherResponse.getDescription(),
+                weatherResponse.getTempMin(),
+                weatherResponse.getTempMax(),
+                weatherResponse.getWindSpeed(),
+                weatherResponse.getClouds(),
+                weatherResponse.getHumidity(),
+                weatherResponse.getPressure(),
+                unit,
+                windUnit
+            );
+            
             weatherResponse.setAiSummary(aiSummary);
 
             return weatherResponse;
         } catch (Exception e) {
             throw new RuntimeException("Error fetching weather data: " + e.getMessage());
         }
-    }
-
-    private String generateAISummary(WeatherResponse weather, String units) {
-        String unit = units.equals("metric") ? "°C" : "°F";
-        String windUnit = units.equals("metric") ? "m/s" : "mph";
-        
-        return String.format("In %s, %s, it's about %.1f%s outside with %s. " +
-                           "Temperature ranges from %.1f to %.1f%s, wind speed is %.1f %s, " +
-                           "clouds %d%%, humidity %d%%, pressure %d hPa.", 
-                           weather.getCity(), 
-                           weather.getCountry(),
-                           weather.getTemperature(), 
-                           unit, 
-                           weather.getDescription(),
-                           weather.getTempMin(),
-                           weather.getTempMax(),
-                           unit,
-                           weather.getWindSpeed(),
-                           windUnit,
-                           weather.getClouds(),
-                           weather.getHumidity(),
-                           weather.getPressure());
     }
 }
