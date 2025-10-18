@@ -35,6 +35,7 @@ frontend/yarn-error.log*
 .env.local
 .env.development
 .env.production
+backend/weatherapp/.env
 
 # Database
 *.db
