@@ -1,0 +1,65 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Backend (Spring Boot / Maven)
+backend/weatherapp/target/
+backend/weatherapp/.mvn/wrapper/maven-wrapper.jar
+backend/weatherapp/mvnw
+backend/weatherapp/mvnw.cmd
+backend/weatherapp/*.log
+backend/weatherapp/*.gz
+backend/weatherapp/.settings/
+backend/weatherapp/.project
+backend/weatherapp/.classpath
+
+# Frontend (Node / React)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+h2/
+
+# Logs
+logs/
+*.log
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Compiled files
+*.class
+*.jar
+*.war
+
+# Package files
+*.tar.gz
+*.zip
+
+# Temporary files
+tmp/
+temp/
+*.tmp
