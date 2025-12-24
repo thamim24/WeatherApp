@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -11,53 +11,54 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Component to handle map events and updates
+// Component to handle map initialization and updates
 function MapController({ center }) {
   const map = useMap();
   
-  // Handle initial load and resize
   useEffect(() => {
-    // Multiple invalidations to ensure map renders on all devices
-    const invalidateMap = () => {
-      map.invalidateSize();
+    // Force map to recognize its container size
+    const forceResize = () => {
+      // First, make sure the container has dimensions
+      const container = map.getContainer();
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        console.log('Map container size:', rect.width, 'x', rect.height);
+      }
+      
+      // Then invalidate
+      map.invalidateSize(true);
     };
     
-    // Immediate invalidation
-    invalidateMap();
+    // Immediate resize
+    forceResize();
     
-    // Set up resize handler with debounce
-    let resizeTimer;
+    // Delayed resizes to handle async rendering
+    const timer1 = setTimeout(forceResize, 100);
+    const timer2 = setTimeout(forceResize, 300);
+    const timer3 = setTimeout(forceResize, 600);
+    
+    // Handle window resize
     const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        invalidateMap();
-      }, 100);
+      setTimeout(forceResize, 50);
     };
     
     window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', invalidateMap);
-    
-    // Multiple delayed invalidations for different scenarios
-    const timers = [
-      setTimeout(invalidateMap, 100),
-      setTimeout(invalidateMap, 300),
-      setTimeout(invalidateMap, 500)
-    ];
+    window.addEventListener('orientationchange', forceResize);
     
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', invalidateMap);
-      clearTimeout(resizeTimer);
-      timers.forEach(timer => clearTimeout(timer));
+      window.removeEventListener('orientationchange', forceResize);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
     };
   }, [map]);
   
-  // Update center when coordinates change
+  // Update view when center changes
   useEffect(() => {
     if (center) {
       map.setView(center, 10);
-      // Invalidate size after view change
-      setTimeout(() => map.invalidateSize(), 100);
+      setTimeout(() => map.invalidateSize(true), 100);
     }
   }, [center, map]);
   
@@ -65,31 +66,39 @@ function MapController({ center }) {
 }
 
 function MapView({ latitude, longitude, cityName }) {
-  const [mapReady, setMapReady] = useState(false);
-  
   if (!latitude || !longitude) {
     return null;
   }
 
   const position = [latitude, longitude];
+  // Use coordinates as key to force complete remount when city changes
+  const mapKey = `map-${latitude}-${longitude}`;
 
   return (
-    <div className="map-view-inline">
+    <div className="map-view-inline" style={{ display: 'block', position: 'relative' }}>
       <MapContainer 
+        key={mapKey}
         center={position} 
         zoom={10} 
         style={{ 
           height: '100%', 
           width: '100%', 
           borderRadius: '15px',
-          minHeight: '250px'
+          minHeight: '250px',
+          display: 'block',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0
         }}
         scrollWheelZoom={false}
-        whenReady={() => setMapReady(true)}
+        zoomControl={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
         />
         <Marker position={position}>
           <Popup>
