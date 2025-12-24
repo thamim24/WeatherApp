@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AIService {
 
-    @Value("${groq.api.key:}")
+    @Value("${groq.api.key}")
     private String groqApiKey;
 
     private final String GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";

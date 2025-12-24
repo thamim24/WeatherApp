@@ -1,6 +1,9 @@
 package com.thamimul.weatherapp.service;
 
 import com.thamimul.weatherapp.dto.WeatherResponse;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,13 +14,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class WeatherService {
 
-    @Value("${weather.api.key:demo_key}")
+    @Value("${weather.api.key}")
     private String apiKey;
 
     @Autowired
     private AIService aiService;
 
     private final String WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
+    
+    @PostConstruct
+    public void validateApiKey() {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException("WEATHER_API_KEY is not configured");
+        }
+    }
 
     public WeatherResponse getWeather(String city, String units) {
         try {
