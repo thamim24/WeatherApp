@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { favoritesAPI } from '../services/api';
 
 function Favorites({ onCityClick }) {
   const [favorites, setFavorites] = useState([]);
@@ -7,7 +7,7 @@ function Favorites({ onCityClick }) {
 
   const fetchFavorites = async () => {
     try {
-      const response = await axios.get('/api/favorites');
+      const response = await favoritesAPI.getAll();
       setFavorites(response.data);
     } catch (error) {
       console.error('Error fetching favorites:', error);
@@ -17,7 +17,7 @@ function Favorites({ onCityClick }) {
   const removeFavorite = async (id, event) => {
     event.stopPropagation(); // Prevent city click when removing
     try {
-      await axios.delete(`/api/favorites/${id}`);
+      await favoritesAPI.remove(id);
       setFavorites(favorites.filter((fav) => fav.id !== id));
     } catch (error) {
       console.error('Error removing favorite:', error);
@@ -28,7 +28,7 @@ function Favorites({ onCityClick }) {
     if (!newCity.trim()) return;
     
     try {
-      const response = await axios.post('/api/favorites', { name: newCity });
+      const response = await favoritesAPI.add(newCity);
       setFavorites([...favorites, response.data]);
       setNewCity('');
     } catch (error) {

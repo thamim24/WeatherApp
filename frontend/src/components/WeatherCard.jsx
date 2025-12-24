@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { weatherAPI, favoritesAPI } from '../services/api';
 import MapView from './MapView';
 
 function WeatherCard({ unit, onAddToFavorites, selectedCity, onCitySearched }) {
@@ -14,9 +14,7 @@ function WeatherCard({ unit, onAddToFavorites, selectedCity, onCitySearched }) {
     
     setError('');
     try {
-      const response = await axios.get(`/api/weather/${searchCity}`, {
-        params: { units: unit },
-      });
+      const response = await weatherAPI.getWeather(searchCity, unit);
       setWeather(response.data);
       setLastSearchedCity(searchCity);
       setCity(searchCity);
@@ -45,7 +43,7 @@ function WeatherCard({ unit, onAddToFavorites, selectedCity, onCitySearched }) {
     if (!weather || !weather.city) return;
     
     try {
-      await axios.post('/api/favorites', { name: weather.city });
+      await favoritesAPI.add(weather.city);
       alert(`${weather.city} added to favorites!`);
       onAddToFavorites();
     } catch (error) {

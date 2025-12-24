@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import WeatherCard from './components/WeatherCard';
 import Favorites from './components/Favorites';
 import UnitToggle from './components/UnitToggle';
 import Footer from './components/Footer';
 
 function App() {
-  const [unit, setUnit] = useState('metric'); // 'metric' for Celsius, 'imperial' for Fahrenheit
-  const [refreshFavorites, setRefreshFavorites] = useState(0);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [unit, setUnit] = React.useState('metric');
+  const [refreshFavorites, setRefreshFavorites] = React.useState(0);
+  const [selectedCity, setSelectedCity] = React.useState('');
+
+  // Debug: Log the API base URL
+  useEffect(() => {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    console.log('🔍 DEBUG: API Base URL =', apiBaseUrl || '(empty - using proxy)');
+    console.log('🔍 DEBUG: All env vars =', import.meta.env);
+  }, []);
 
   const toggleUnit = () => {
     setUnit((prevUnit) => (prevUnit === 'metric' ? 'imperial' : 'metric'));
