@@ -3,7 +3,7 @@ import axios from 'axios';
 // Get API base URL from environment variable
 // In development: uses Vite proxy (localhost:8080)
 // In production: uses Railway backend URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 // Create axios instance with base configuration
 const api = axios.create({

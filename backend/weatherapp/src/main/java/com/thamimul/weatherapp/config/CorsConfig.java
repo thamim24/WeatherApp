@@ -14,8 +14,13 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedOrigins(
+                            "http://localhost:5173",
+                            "https://weather-app-pearl-eta-11.vercel.app",
+                            "https://weather-app-git-main-thamimul-ansaris-projects.vercel.app",
+                            "https://weather-m14if22vx-thamimul-ansaris-projects.vercel.app"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
