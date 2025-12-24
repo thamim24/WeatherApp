@@ -132,19 +132,23 @@ button:hover {
 
 .map-section {
   flex: 1;
-  min-width: 0;
+  min-width: 300px;
   min-height: 350px;
+  width: 100%;
 }
 
 .details-section {
   flex: 1;
-  min-width: 0;
+  min-width: 300px;
+  width: 100%;
 }
 
 .map-view-inline {
   height: 350px;
   width: 100%;
   position: relative;
+  display: block;
+  min-width: 100%;
 }
 
 .map-view-inline .leaflet-container {
@@ -152,6 +156,7 @@ button:hover {
   width: 100% !important;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 100% !important;
 }
 
 .weather-details {
