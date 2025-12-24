@@ -17,24 +17,38 @@ function MapController({ center }) {
   
   // Handle initial load and resize
   useEffect(() => {
-    // Invalidate size immediately
-    map.invalidateSize();
-    
-    // Set up resize handler
-    const handleResize = () => {
+    // Multiple invalidations to ensure map renders on all devices
+    const invalidateMap = () => {
       map.invalidateSize();
     };
     
-    window.addEventListener('resize', handleResize);
+    // Immediate invalidation
+    invalidateMap();
     
-    // Additional invalidation after a short delay to ensure proper rendering
-    const timer = setTimeout(() => {
-      map.invalidateSize();
-    }, 200);
+    // Set up resize handler with debounce
+    let resizeTimer;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        invalidateMap();
+      }, 100);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', invalidateMap);
+    
+    // Multiple delayed invalidations for different scenarios
+    const timers = [
+      setTimeout(invalidateMap, 100),
+      setTimeout(invalidateMap, 300),
+      setTimeout(invalidateMap, 500)
+    ];
     
     return () => {
       window.removeEventListener('resize', handleResize);
-      clearTimeout(timer);
+      window.removeEventListener('orientationchange', invalidateMap);
+      clearTimeout(resizeTimer);
+      timers.forEach(timer => clearTimeout(timer));
     };
   }, [map]);
   
@@ -42,6 +56,8 @@ function MapController({ center }) {
   useEffect(() => {
     if (center) {
       map.setView(center, 10);
+      // Invalidate size after view change
+      setTimeout(() => map.invalidateSize(), 100);
     }
   }, [center, map]);
   
