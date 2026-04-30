@@ -16,6 +16,16 @@ backend/weatherapp/*.gz
 backend/weatherapp/.settings/
 backend/weatherapp/.project
 backend/weatherapp/.classpath
+backend/weatherapp/dist/
+backend/weatherapp/build/
+backend/weatherapp/.env
+backend/weatherapp/.env.local
+backend/weatherapp/.env.development.local
+backend/weatherapp/.env.test.local
+backend/weatherapp/.env.production.local
+backend/weatherapp/npm-debug.log*
+backend/weatherapp/yarn-debug.log*
+backend/weatherapp/yarn-error.log*
 
 # Frontend (Node / React)
 frontend/node_modules/
