@@ -9,13 +9,10 @@ public class DotenvConfig {
 
     @PostConstruct
     public void loadEnv() {
-        Dotenv dotenv = Dotenv.configure()
-                .directory("./backend/weatherapp")
-                .ignoreIfMissing()
-                .load();
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
         dotenv.entries().forEach(entry ->
-            System.setProperty(entry.getKey(), entry.getValue())
+                System.setProperty(entry.getKey(), entry.getValue())
         );
     }
 }
