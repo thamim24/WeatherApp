@@ -6,6 +6,9 @@ COPY . .
 
 RUN mvn clean package -DskipTests
 
+# rename jar to fixed name
+RUN mv target/*.jar app.jar
+
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/*.jar"]
+CMD ["java", "-jar", "app.jar"]
